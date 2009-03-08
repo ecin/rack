@@ -23,6 +23,9 @@ module Rack
     def call(env)
       @app.call(env)
     rescue StandardError, LoadError, SyntaxError => e
+      Dtrace::Probe::Request.error do |p|
+        p.fire(1)
+      end
       backtrace = pretty(env, e)
       [500,
        {"Content-Type" => "text/html",

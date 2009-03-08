@@ -32,6 +32,9 @@ module Rack
     ## A Rack application is an Ruby object (not a class) that
     ## responds to +call+.
     def call(env=nil)
+      Dtrace::Probe::Request.start do |p|
+        p.fire(1)
+      end
       dup._call(env)
     end
 
@@ -52,6 +55,9 @@ module Rack
       ## and the *body*.
       check_content_type status, headers
       check_content_length status, headers, env
+      Dtrace::Probe::Request.finish do |p|
+        p.fire(1)
+      end
       [status, headers, self]
     end
 

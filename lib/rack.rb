@@ -5,6 +5,14 @@
 
 $: << File.expand_path(File.dirname(__FILE__))
 
+require 'rubygems'
+require 'dtrace/provider'
+
+Dtrace::Provider.create :request do |p|
+    p.probe :start,   :integer
+    p.probe :finish,  :integer
+    p.probe :error,   :integer
+end
 
 # The Rack main module, serving as a namespace for all core Rack
 # modules and classes.
