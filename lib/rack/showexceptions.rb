@@ -24,7 +24,7 @@ module Rack
       @app.call(env)
     rescue StandardError, LoadError, SyntaxError => e
       Dtrace::Probe::Request.error do |p|
-        p.fire(1)
+        p.fire(Process::pid, Rack::Request.new(env).url || '')
       end
       backtrace = pretty(env, e)
       [500,

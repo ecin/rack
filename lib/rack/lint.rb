@@ -33,7 +33,7 @@ module Rack
     ## responds to +call+.
     def call(env=nil)
       Dtrace::Probe::Request.start do |p|
-        p.fire(1)
+        p.fire(Process::pid, Rack::Request.new(env).url || '')
       end
       dup._call(env)
     end
@@ -56,7 +56,7 @@ module Rack
       check_content_type status, headers
       check_content_length status, headers, env
       Dtrace::Probe::Request.finish do |p|
-        p.fire(1)
+        p.fire(Process::pid, Rack::Request.new(env).url || '')
       end
       [status, headers, self]
     end
