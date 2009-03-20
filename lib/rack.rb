@@ -8,10 +8,14 @@ $: << File.expand_path(File.dirname(__FILE__))
 require 'rubygems'
 require 'dtrace/provider'
 
+# Dtrace provider definition.
+# Integer arguments represent pid values for webserver.
+# String arguments represent url that requests are handling.
+
 Dtrace::Provider.create :request do |p|
-    p.probe :start,   :integer
-    p.probe :finish,  :integer
-    p.probe :error,   :integer
+    p.probe :start,   :integer, :string
+    p.probe :finish,  :integer, :string
+    p.probe :error,   :integer, :string
 end
 
 # The Rack main module, serving as a namespace for all core Rack
