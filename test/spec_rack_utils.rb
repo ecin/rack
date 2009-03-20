@@ -129,6 +129,10 @@ context "Rack::Utils" do
     helper.call(%w(foo bar identity), [["foo", 0], ["bar", 0]]).should.equal("identity")
     helper.call(%w(foo bar baz identity), [["*", 0], ["identity", 0.1]]).should.equal("identity")
   end
+
+  specify "should return the bytesize of String" do
+    Rack::Utils.bytesize("FOO\xE2\x82\xAC").should.equal 6
+  end
 end
 
 context "Rack::Utils::HeaderHash" do
@@ -282,11 +286,12 @@ context "Rack::Utils::Multipart" do
     params["files"][:tempfile].read.should.equal ""
   end
 
-  specify "should not create empty an tempfile if no file was selected" do
+  specify "should not include file params if no file was selected" do
     env = Rack::MockRequest.env_for("/", multipart_fixture(:none))
     params = Rack::Utils::Multipart.parse_multipart(env)
     params["submit-name"].should.equal "Larry"
     params["files"].should.equal nil
+    params.keys.should.not.include "files"
   end
 
   specify "should parse IE multipart upload and clean up filename" do

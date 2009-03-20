@@ -46,7 +46,7 @@ module Rack
     # For more information on the use of media types in HTTP, see:
     # http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.7
     def media_type
-      content_type && content_type.split(/\s*[;,]\s*/, 2)[0].downcase
+      content_type && content_type.split(/\s*[;,]\s*/, 2).first.downcase
     end
 
     # The media type parameters provided in CONTENT_TYPE as a Hash, or
@@ -211,11 +211,13 @@ module Rack
 
       url
     end
-
+    
+    def path
+      script_name + path_info
+    end
+    
     def fullpath
-      path = script_name + path_info
-      path << "?" << query_string  unless query_string.empty?
-      path
+      query_string.empty? ? path : "#{path}?#{query_string}"
     end
 
     def accept_encoding
